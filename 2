@@ -1,0 +1,37 @@
+# Find-S Algorithm Program
+import csv
+
+print("\nThe most general hypothesis: ['?', '?', '?', '?', '?', '?']")
+print("\nThe most specific hypothesis: ['Ø', 'Ø', 'Ø', 'Ø', 'Ø', 'Ø']")
+
+a = []
+
+with open('enjoysport.csv', 'r') as csvFile:
+    reader = csv.reader(csvFile)
+    for row in reader:
+        a.append(row)
+        print(row)
+
+csvFile.close()
+
+num_attributes = len(a[0]) - 1
+print("\nInitial Value of hypothesis :")
+hypothesis = ['Ø'] * num_attributes
+print(hypothesis)
+
+for j in range(0, num_attributes):
+    hypothesis[j] = a[1][j]
+
+print("\nIn Find-S : Finding Maximally Specific hypothesis (h)")
+print(hypothesis)
+
+for i in range(1, len(a)):
+    if a[i][num_attributes] == 'yes':
+        for j in range(num_attributes):
+            if a[i][j] != hypothesis[j]:
+                hypothesis[j] = '?'
+            else:
+                hypothesis[j] = a[i][j]
+
+print("\nFor the given training examples the Maximally Specific hypothesis is :")
+print(hypothesis)
