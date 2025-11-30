@@ -1,0 +1,51 @@
+# Program 7 - Bayesian Network for Heart Disease (notebook exact)
+import numpy as np
+import pandas as pd
+from pgmpy.models import BayesianModel
+from pgmpy.estimators import MaximumLikelihoodEstimator
+from pgmpy.inference import VariableElimination
+
+# Load dataset
+heartDisease = pd.read_csv("heart.csv")
+# replace missing-values symbol '?' with np.nan (as in notebook)
+heartDisease = heartDisease.replace('?', np.nan)
+
+print("Sample instances from the Dataset are given below")
+print(heartDisease.head())
+
+print("\nAttributes and Types (datatypes)")
+print(heartDisease.dtypes)
+
+# Define Bayesian network structure (every listed attribute -> heartdisease)
+model = BayesianModel([
+    ('age', 'heartdisease'),
+    ('sex', 'heartdisease'),
+    ('cp', 'heartdisease'),
+    ('thalach', 'heartdisease'),
+    ('exang', 'heartdisease'),
+    ('oldpeak', 'heartdisease')
+])
+
+print("\nLearning CPD using Maximum Likelihood Estimators")
+# Fit model with Maximum Likelihood Estimator (as in notebook)
+# Drop rows with missing values so estimator runs (matches notebook's replace step)
+model.fit(heartDisease.dropna(), estimator=MaximumLikelihoodEstimator)
+
+print("\nIn Inferencing with Bayesian Network :)")
+heartDisease_infer = VariableElimination(model)
+
+# 1. Probability of HeartDisease given evidence (example evidence shown in notebook)
+print("\n1. Probability of HeartDisease given evidence (example evidence shown in notes):")
+q1 = heartDisease_infer.query(variables=['heartdisease'],
+                              evidence={'cp': 2, 'exang': 1, 'thalach': 150})
+print(q1)
+
+# 2. Probability of HeartDisease given another evidence (as in notebook)
+print("\n2. Probability of HeartDisease given another evidence (example):")
+q2 = heartDisease_infer.query(variables=['heartdisease'],
+                              evidence={'cp': 3, 'exang': 0, 'thalach': 170})
+print(q2)
+
+# Print results in notebook-style
+print("\nq1 =", q1)
+print("q2 =", q2)
