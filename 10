@@ -1,0 +1,47 @@
+# Program 10 - EM Clustering (Gaussian Mixture) on Iris dataset (notebook exact)
+import matplotlib.pyplot as plt
+import pandas as pd
+import numpy as np
+from sklearn import datasets, preprocessing
+from sklearn.mixture import GaussianMixture
+
+# Load iris dataset
+iris = datasets.load_iris()
+x = pd.DataFrame(iris.data)
+x.columns = ['Petal length', 'Sepal width', 'Petal length', 'Petal width']  # kept as in notebook (note duplicate name)
+y = pd.DataFrame(iris.target)
+y.columns = ['Target']
+
+# Scale features
+scaler = preprocessing.StandardScaler()
+scaler.fit(x)
+x_scaled = scaler.transform(x)
+x_scaled_df = pd.DataFrame(x_scaled, columns=x.columns)
+
+# Fit GMM (EM algorithm)
+gmm = GaussianMixture(n_components=3)
+gmm.fit(x_scaled_df)
+gmm_labels = gmm.predict(x_scaled_df)
+
+# Plotting - Real clusters (true labels) and GMM clusters (EM)
+plt.figure(figsize=(14, 4))
+colormap = np.array(['red', 'lime', 'black'])
+
+# True clusters plot
+plt.subplot(1, 2, 1)
+plt.scatter(x['Petal length'], x['Petal width'], c=colormap[y['Target']], s=40)
+plt.title('Real Clusters')
+plt.xlabel('Petal length')
+plt.ylabel('Petal width')
+
+# GMM clusters plot
+plt.subplot(1, 2, 2)
+plt.scatter(x['Petal length'], x['Petal width'], c=colormap[gmm_labels], s=40)
+plt.title('Gmm Clustering (EM Algorithm)')
+plt.xlabel('Petal length')
+plt.ylabel('Petal width')
+
+plt.tight_layout()
+plt.show()
+
+print("Observation = The Gmm Clustering using EM Algorithm clusters the data & we can visually compare it with the true labels")
