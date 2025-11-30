@@ -1,0 +1,82 @@
+1A)
+# ---------- Importing and Exporting CSV File ----------
+import pandas as pd
+
+# Step 1: Importing Data
+csv_fp = "input.csv"
+df = pd.read_csv(csv_fp)
+print("Imported CSV data:")
+print(df.head())
+
+# Step 2: Process the data
+df["New Value"] = df["humidity"]
+print("\nProcessed data:")
+print(df.head())
+
+# Step 3: Exporting data
+df.to_csv("exported_data.csv", index=False)
+print("\nData Exported to 'exported_data.csv'")
+
+df1 = pd.read_csv("exported_data.csv")
+print(df1.head())
+
+# ---------- Importing and Exporting Excel File ----------
+# Step 1: Read Data from Excel
+excel_fp = "marks.xlsx"
+df2 = pd.read_excel(excel_fp)
+print("\nOriginal Data:")
+print(df2)
+
+# Step 2: Process the data
+df2["Total"] = df2.sum(axis=1)
+print("\nData with row totals:")
+print(df2)
+
+# Step 3: Exporting data
+df2.to_excel("exported_data.xlsx", index=False)
+df3 = pd.read_excel("exported_data.xlsx")
+print("\nExported Excel data:")
+print(df3.head())
+
+
+1B)
+# Demonstrate any 2 data pre-processing techniques
+
+# Step 1: Importing Libraries
+import pandas as pd
+from sklearn.preprocessing import LabelEncoder
+from sklearn.preprocessing import StandardScaler
+from sklearn.impute import SimpleImputer
+from sklearn.compose import ColumnTransformer
+from sklearn.preprocessing import OneHotEncoder
+
+# Step 2: Importing Dataset
+df = pd.read_csv("dataset.csv")
+print("Original Dataset:")
+print(df)
+
+# Step 3: Finding Missing Data
+missing_data = df.isnull().sum()
+print("\nMissing data:")
+print(missing_data)
+
+# Step 4: Handling Missing Data (Imputation)
+imputer = SimpleImputer(strategy='mean')
+df["Salary"] = imputer.fit_transform(df[["Salary"]])
+df["Age"]    = imputer.fit_transform(df[["Age"]])
+
+# Step 5: Encoding Categorical Data
+label_encoder = LabelEncoder()
+df["Gender"] = label_encoder.fit_transform(df[["Gender"]])
+
+# One-Hot Encoding for Department
+ct = ColumnTransformer(
+    transformers=[
+        ('onehot', OneHotEncoder(), ["Department"])
+    ],
+    remainder='passthrough'
+)
+
+df1_encoded = ct.fit_transform(df)
+print("\nEncoded Data:")
+print(df1_encoded)
