@@ -1,0 +1,35 @@
+# Candidate Elimination Algorithm
+import numpy as np
+import pandas as pd
+
+data = pd.read_csv("enjoysport(1).csv")
+concepts = np.array(data.iloc[:, 0:-1])
+target = np.array(data.iloc[:, -1])
+
+def learn(concepts, target):
+    Specific_h = concepts[0].copy()
+    general_h = [['?' for i in range(len(Specific_h))] for i in range(len(Specific_h))]
+
+    for i, h in enumerate(concepts):
+        if target[i] == 'yes':
+            for x in range(len(Specific_h)):
+                if h[x] != Specific_h[x]:
+                    Specific_h[x] = '?'
+                    general_h[x][x] = '?'
+
+        if target[i] == 'no':
+            for x in range(len(Specific_h)):
+                if h[x] != Specific_h[x]:
+                    general_h[x][x] = Specific_h[x]
+                else:
+                    general_h[x][x] = '?'
+
+    indices = [i for i, val in enumerate(general_h) if val == ['?', '?', '?', '?', '?', '?']]
+    for i in indices:
+        general_h.remove(['?', '?', '?', '?', '?', '?'])
+
+    return Specific_h, general_h
+
+s_final, g_final = learn(concepts, target)
+print("Final S:", s_final, sep="\n")
+print("Final G:", g_final, sep="\n")
