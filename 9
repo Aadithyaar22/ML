@@ -1,0 +1,66 @@
+# Program 9 - K-Nearest Neighbors on Iris dataset (notebook exact)
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+import pandas as pd
+from sklearn import datasets
+from sklearn.model_selection import train_test_split
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn import metrics
+
+# Load iris dataset
+iris = datasets.load_iris()
+x = iris.data
+y = iris.target
+
+# Train-test split (notebook: test_size=0.2, random_state=42)
+x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2, random_state=42)
+
+# KNN with k=3 (notebook)
+knn = KNeighborsClassifier(n_neighbors=3)
+knn.fit(x_train, y_train)
+
+# Predictions
+y_pred = knn.predict(x_test)
+
+# Collect correct and incorrect predictions exactly as in notes
+correct = []
+incorrect = []
+
+for i in range(len(y_test)):
+    if y_test[i] == y_pred[i]:
+        correct.append((x_test[i], y_test[i], y_pred[i]))
+    else:
+        incorrect.append((x_test[i], y_test[i], y_pred[i]))
+
+# Print correct predictions
+print("Correct Predictions:")
+for sample in correct:
+    features, actual_idx, pred_idx = sample
+    print(f"Features: {features}, Actual: {iris.target_names[actual_idx]}, Predicted: {iris.target_names[pred_idx]}")
+
+# Print incorrect predictions
+if len(incorrect) > 0:
+    print("\nIncorrect Predictions:")
+    for sample in incorrect:
+        features, actual_idx, pred_idx = sample
+        print(f"Features: {features}, Actual: {iris.target_names[actual_idx]}, Predicted: {iris.target_names[pred_idx]}")
+else:
+    print("\nNo Incorrect Predictions")
+
+# Accuracy and confusion matrix (notebook style)
+accuracy = metrics.accuracy_score(y_test, y_pred)
+print(f"\n\nAccuracy: {accuracy * 100:.2f} %")
+
+cm = metrics.confusion_matrix(y_test, y_pred)
+print("\nConfusion matrix:")
+print(cm)
+
+# Plot confusion matrix heatmap (notebook style)
+plt.figure(figsize=(6, 5))
+sns.heatmap(cm, annot=True, fmt='d', cmap='Blues',
+            xticklabels=iris.target_names, yticklabels=iris.target_names)
+plt.title('Confusion Matrix')
+plt.xlabel('Predicted label')
+plt.ylabel('True label')
+plt.show()
