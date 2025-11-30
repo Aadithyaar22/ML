@@ -1,0 +1,38 @@
+# Program 5 - Random Forest on Iris dataset (notebook exact)
+import pandas as pd
+from sklearn import datasets
+from sklearn.model_selection import train_test_split
+from sklearn.ensemble import RandomForestClassifier
+from sklearn import metrics
+
+# Load iris dataset
+iris = datasets.load_iris()
+print(iris.target_names)
+
+# Prepare features and labels
+x, y = datasets.load_iris(return_x_y=True)
+
+# Train-test split
+x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.30)
+
+# Create DataFrame as in notebook
+data = pd.DataFrame({
+    'sepalength': iris.data[:, 0],
+    'sepalwidth': iris.data[:, 1],
+    'petallength': iris.data[:, 2],
+    'petalwidth': iris.data[:, 3],
+    'species': iris.target
+})
+print(data.head())
+
+# Train Random Forest classifier
+clf = RandomForestClassifier(n_estimators=100)
+clf.fit(x_train, y_train)
+
+# Predict on test set and print accuracy
+y_pred = clf.predict(x_test)
+print("Accuracy of the model:", metrics.accuracy_score(y_test, y_pred))
+
+# Predict for a single sample (as in notebook)
+print(clf.predict([[3, 3, 2, 2]]))
+print(iris.target_names[clf.predict([[3, 3, 2, 2]])])
